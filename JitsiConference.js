@@ -1757,6 +1757,11 @@ JitsiConference.prototype.kickParticipant = function(id, reason) {
     this.room.kick(participant.getJid(), reason);
 };
 
+//BNDA: End Meeting
+JitsiConference.prototype.endConferenceMeeting = function(id, reason) {
+    this.room.endMeeting(id, reason);
+};
+
 /**
  * Maybe clears the timeout which emits {@link ACTION_JINGLE_SI_TIMEOUT}
  * analytics event.

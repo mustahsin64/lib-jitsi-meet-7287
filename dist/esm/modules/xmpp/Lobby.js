@@ -258,6 +258,34 @@ export default class Lobby {
             this.mainRoom.addEventListener(XMPPEvents.MUC_JOINED, () => {
                 this.leave();
             });
+            //BNDA :- ADD
+            this.lobbyRoom.addPresenceListener(EMAIL_COMMAND, (node, from) => {
+                this.lobbyRoom.eventEmitter.emit(XMPPEvents.MUC_LOBBY_MEMBER_UPDATED, from, { email: node.value });
+            });
+            this.lobbyRoom.addEventListener(XMPPEvents.MUC_MEMBER_JOINED, 
+            // eslint-disable-next-line max-params
+            (from, nick, role, isHiddenDomain, statsID, status, identity, botType, jid) => {
+                // we need to ignore joins on lobby for participants that are already in the main room
+                if (Object.values(this.mainRoom.members).find(m => m.jid === jid)) {
+                    return;
+                }
+                console.log('In lobby MUC_MEMBER_JOINED event');
+                // Check if the user is a member if any breakout room.
+                for (const room of Object.values(this.mainRoom.getBreakoutRooms()._rooms)) {
+                    if (Object.values(room.participants).find(p => p.jid === jid)) {
+                        return;
+                    }
+                }
+                // we emit the new event on the main room so we can propagate
+                // events to the conference
+                this.mainRoom.eventEmitter.emit(XMPPEvents.MUC_LOBBY_MEMBER_JOINED, Strophe.getResourceFromJid(from), nick, identity ? identity.avatar : undefined);
+            });
+            this.lobbyRoom.addEventListener(XMPPEvents.MUC_MEMBER_LEFT, from => {
+                // we emit the new event on the main room so we can propagate
+                // events to the conference
+                this.mainRoom.eventEmitter.emit(XMPPEvents.MUC_LOBBY_MEMBER_LEFT, Strophe.getResourceFromJid(from));
+            });
+            //BNDA :- END
         }
         return new Promise((resolve, reject) => {
             this.lobbyRoom.addEventListener(XMPPEvents.MUC_JOINED, () => {

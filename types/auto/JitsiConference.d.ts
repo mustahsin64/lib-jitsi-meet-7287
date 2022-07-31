@@ -594,6 +594,7 @@ declare class JitsiConference {
      * @param {string} reason reason of the participant to kick
      */
     kickParticipant(id: string, reason: string): void;
+    endConferenceMeeting(id: any, reason: any): void;
     private _maybeClearSITimeout;
     _sessionInitiateTimeout: any;
     private _maybeSetSITimeout;

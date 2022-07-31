@@ -1259,6 +1259,29 @@ export default class ChatRoom extends Listenable {
             error => logger.log('Kick participant error: ', error));
     }
 
+    //BNDA: End Meeting for all
+    endMeeting(id, reason = 'End Meeting') {
+        logger.log('[ChatRoom.js] : endMeeting method, sending stanza for destroy the room');
+        // we are kicking out focus first otherwise after destryoing the room and
+        // enter with the same room name then no user can be moderator again, might be 
+        // reason as focus not leaving successfully
+        //this.kick('focus@auth.meet.jitsi/focus');
+
+        const endMeetingIQ = $iq({ to: this.roomjid,
+            type: 'set' })
+            .c('query', { xmlns: 'http://jabber.org/protocol/muc#owner' })
+            .c('destroy')
+            .c('reason').t('Meeting end').up().up().up();
+
+        this.connection.sendIQ(
+            endMeetingIQ,
+            result => {
+                logger.log('Succcess End Meeting for all ', result)
+            },
+            error => logger.log('End Meeting for all: ', error));
+    }
+    //BNDA: END
+
     /* eslint-disable max-params */
 
     /**

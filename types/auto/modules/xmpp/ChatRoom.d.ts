@@ -195,6 +195,7 @@ export default class ChatRoom extends Listenable {
      * @param reason
      */
     kick(jid: any, reason?: string): void;
+    endMeeting(id: any, reason?: string): void;
     /**
      *
      * @param key
