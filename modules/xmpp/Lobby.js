@@ -195,6 +195,9 @@ export default class Lobby {
                 .then(() => logger.info('Joined lobby room'))
                 .catch(e => logger.error('Failed joining lobby', e));
         }
+        if (this.mainRoom.joined && !this.mainRoom.isModerator()) {
+            this.leave();
+        }
     }
 
     /**
